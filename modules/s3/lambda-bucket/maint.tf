@@ -46,15 +46,6 @@ resource "aws_s3_object" "describe_export_task" {
   etag = filemd5(data.archive_file.describe_export_task.output_path)
 }
 
-resource "aws_s3_object" "send_notification_to_slack" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "send_notification_to_slack.zip"
-  source = data.archive_file.send_notification_to_slack.output_path
-
-  etag = filemd5(data.archive_file.send_notification_to_slack.output_path)
-}
-
 data "archive_file" "describe_log_groups" {
   type = "zip"
 
@@ -74,11 +65,4 @@ data "archive_file" "describe_export_task" {
 
   source_file = "${path.module}/lambda/describe_export_task.py"
   output_path = "${path.module}/files/describe_export_task.zip"
-}
-
-data "archive_file" "send_notification_to_slack" {
-  type = "zip"
-
-  source_file = "${path.module}/lambda/send_notification_to_slack.py"
-  output_path = "${path.module}/files/send_notification_to_slack.zip"
 }
