@@ -1,5 +1,5 @@
 variable "role_name" {
-  type = string
+  type    = string
   default = "ExcuteStepFunctions"
 }
 

@@ -44,7 +44,18 @@ module "step_functions" {
     send_notification_to_slack_lambda_arn = module.send_notification_to_slack_lambda.arn
 }
 
-module "event_bridge" {
-    source = "./modules/event-bridge"
+module "send_email_notification_topic" {
+    source        = "./modules/sns"
+    email_address = var.email_address
+}
+
+module "cron_export_logs_event_rule" {
+    source             = "./modules/eventbridge/cron_export_logs_event_rule"
     step_functions_arn = module.step_functions.step_functions_arn
+}
+
+module "fail_or_time_out_notification_event_rule" {
+    source            = "./modules/eventbridge/fail_or_time_out_notification_event_rule"
+    state_machine_arn = module.step_functions.step_functions_arn
+    sns_topic_arn     = module.send_email_notification_topic.send_email_notification_topic_arn
 }
