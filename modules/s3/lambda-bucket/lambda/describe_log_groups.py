@@ -4,7 +4,7 @@ logs_client = boto3.client('logs')
 TARGET_LOG_GROUPS = []
 
 def describe_log_group_name():
-    prefix = '/aws/lambda/test'
+    prefix = '/cloudwatch_logs/lambda'
 
     response = logs_client.describe_log_groups(
         logGroupNamePrefix=prefix
@@ -15,7 +15,7 @@ def describe_log_group_name():
             {
                 "log_group_name": log_group["logGroupName"],
                 "prefix": log_group["logGroupName"]
-             }
+            }
         )
 
 
