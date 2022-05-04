@@ -1,3 +1,8 @@
+variable "event_rule_name" {
+  type    = string
+  default = "FailOrTimeOutNotification"
+}
+
 variable "role_name" {
   type    = string
   default = "ExcuteStepFunctions"

@@ -1,12 +1,12 @@
 resource "aws_cloudwatch_event_rule" "fail_or_time_out_notification_event_rule" {
-  name                 = "ExportCloudWatchLogsToS3"
+  name                 = "${var.event_rule_name}"
   event_pattern        = <<EOF
 {
   "source": ["aws.states"],
   "detail-type": ["Step Functions Execution Status Change"],
   "detail": {
     "status": ["FAILED", "TIMED_OUT"],
-    "stateMachineArn": [${var.state_machine_arn}]
+    "stateMachineArn": ["${var.state_machine_arn}"]
   }
 }
 EOF

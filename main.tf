@@ -43,7 +43,7 @@ module "send_email_notification_topic" {
 }
 
 module "cron_export_logs_event_rule" {
-    source             = "./modules/eventbridge/cron_export_logs_event_rule"
+    source            = "./modules/eventbridge/cron_export_logs_event_rule"
     state_machine_arn = module.step_functions.state_machine_arn
 }
 

@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_event_rule" "this" {
-  name                = "ExportCloudWatchLogsToS3"
+  name                = "${var.event_rule_name}"
 
   schedule_expression = "cron(0 21 * * ? *)"
 }
