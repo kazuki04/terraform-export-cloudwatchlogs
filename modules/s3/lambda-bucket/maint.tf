@@ -1,16 +1,11 @@
-resource "random_pet" "lambda_bucket_name" {
-  prefix = "learn-terraform-functions"
-  length = 4
-}
-
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "lambda-function-20220406"
+  bucket = var.bucket
 
   force_destroy = true
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket                = aws_s3_bucket.lambda_bucket.id
+  bucket = aws_s3_bucket.lambda_bucket.id
 
   rule {
     apply_server_side_encryption_by_default {

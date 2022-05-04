@@ -1,5 +1,3 @@
-data "aws_partition" "current" {}
-
 resource "aws_lambda_function" "this" {
   function_name                  = var.function_name
   description                    = var.description
@@ -14,7 +12,7 @@ resource "aws_lambda_function" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {
-  name              = "/aws/lambda/${var.function_name}"
+  name = "/aws/lambda/${var.function_name}"
 }
 
 resource "aws_iam_role" "lambda" {

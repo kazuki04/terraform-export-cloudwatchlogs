@@ -1,5 +1,3 @@
-data "aws_partition" "current" {}
-
 resource "aws_lambda_function" "this" {
   function_name                  = var.function_name
   description                    = var.description
