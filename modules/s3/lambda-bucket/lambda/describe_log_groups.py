@@ -1,10 +1,12 @@
 import boto3
+import os
 
 logs_client = boto3.client('logs')
 TARGET_LOG_GROUPS = []
+TARGET_LOG_GROUP_PREFIX = os.environ["TARGET_LOG_GROUP_PREFIX"]
 
 def describe_log_group_name():
-    prefix = '/cloudwatch_logs/lambda'
+    prefix = TARGET_LOG_GROUP_PREFIX
 
     response = logs_client.describe_log_groups(
         logGroupNamePrefix=prefix

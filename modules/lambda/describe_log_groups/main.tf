@@ -8,6 +8,12 @@ resource "aws_lambda_function" "this" {
   s3_bucket = var.lambda_bucket_name
   s3_key    = var.object_key
 
+  environment {
+    variables = {
+      TARGET_LOG_GROUP_PREFIX = var.target_log_group_prefix
+    }
+  }
+
   depends_on = [aws_cloudwatch_log_group.lambda]
 }
 

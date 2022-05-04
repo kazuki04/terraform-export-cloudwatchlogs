@@ -12,22 +12,23 @@ module "lambda-bucket" {
 }
 
 module "describe_log_groups_lambda" {
-    source = "./modules/lambda/describe_log_groups"
-    lambda_bucket_name = module.lambda-bucket.lambda_bucket_name
-    object_key = module.lambda-bucket.describe_log_groups
+    source                  = "./modules/lambda/describe_log_groups"
+    lambda_bucket_name      = module.lambda-bucket.lambda_bucket_name
+    object_key              = module.lambda-bucket.describe_log_groups
+    target_log_group_prefix = var.target_log_group_prefix
 }
 
 module "create_export_task_lambda" {
-    source = "./modules/lambda/create_export_task"
-    bucket_name = module.s3.bucket_name
+    source             = "./modules/lambda/create_export_task"
+    bucket_name        = module.s3.bucket_name
     lambda_bucket_name = module.lambda-bucket.lambda_bucket_name
-    object_key = module.lambda-bucket.create_export_task
+    object_key         = module.lambda-bucket.create_export_task
 }
 
 module "describe_export_task_lambda" {
-    source = "./modules/lambda/describe_export_task"
+    source             = "./modules/lambda/describe_export_task"
     lambda_bucket_name = module.lambda-bucket.lambda_bucket_name
-    object_key = module.lambda-bucket.describe_export_task
+    object_key         = module.lambda-bucket.describe_export_task
 }
 
 module "step_functions" {

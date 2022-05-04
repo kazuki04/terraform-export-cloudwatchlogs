@@ -39,6 +39,12 @@ variable "role_description" {
   default     = "Role for DescribeLogGroupsForLambdaFunction"
 }
 
+variable "target_log_group_prefix" {
+  description = ""
+  type        = string
+  default     = "aws/lambda/"
+}
+
 variable "object_key" {}
 
 variable "lambda_bucket_name" {}
