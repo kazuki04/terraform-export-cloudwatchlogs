@@ -15,7 +15,3 @@ output "create_export_task" {
 output "describe_export_task" {
     value = aws_s3_object.describe_export_task.id
 }
-
-output "create_export_task_output_base64sha256" {
-    value = data.archive_file.create_export_task.output_base64sha256
-}
