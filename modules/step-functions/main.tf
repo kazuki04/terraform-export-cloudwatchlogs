@@ -139,7 +139,9 @@ data "aws_iam_policy_document" "inline_policy" {
     effect = "Allow"
     actions   = ["lambda:InvokeFunction"]
     resources = [
-        "*"
+        "${var.describe_log_groups_lambda_arn}",
+        "${var.create_export_task_lambda_arn}",
+        "${var.describe_export_task_lambda_arn}"
     ]
   }
 }
@@ -147,11 +149,6 @@ data "aws_iam_policy_document" "inline_policy" {
 ##################
 # CloudWatch Logs
 ##################
-
-# data "aws_cloudwatch_log_group" "sfn" {
-#   name = var.cloudwatch_log_group_name
-# }
-
 resource "aws_cloudwatch_log_group" "sfn" {
-  name              = "/aws/sfn/${var.name}"
+  name = "/aws/sfn/${var.name}"
 }
