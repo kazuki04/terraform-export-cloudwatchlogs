@@ -44,5 +44,3 @@ variable "describe_log_groups_lambda_arn" {}
 variable "create_export_task_lambda_arn" {}
 
 variable "describe_export_task_lambda_arn" {}
-
-variable "send_notification_to_slack_lambda_arn" {}

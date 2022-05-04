@@ -1,85 +1,77 @@
 locals {
-  # Normalize ARN by trimming ":*" because data-source has it, but resource does not have it
   log_group_arn = aws_cloudwatch_log_group.sfn.arn
-
-  role_name = "StepFunctionsIAMRole"
-  
-  definition = <<EOF
-    {
-        "StartAt": "Initialize",
-        "TimeoutSeconds": 600,
-        "States": {
-        "Initialize": {
-            "Type": "Task",
-            "Resource": "${var.describe_log_groups_lambda_arn}",
-            "ResultPath": "$.log_groups_info",
-            "Next": "CreateExportTask"
-        },
-        "CreateExportTask": {
-            "Type": "Task",
-            "Resource": "${var.create_export_task_lambda_arn}",
-            "ResultPath": "$.log_groups_info",
-            "Next": "DescribeExportTasks"
-        },
-        "DescribeExportTasks": {
-            "Type": "Task",
-            "Resource": "${var.describe_export_task_lambda_arn}",
-            "ResultPath": "$.describe_export_task",
-            "Next": "CheckStatusCode"
-        },
-        "CheckStatusCode": {
-            "Type": "Choice",
-            "Choices": [
+  role_name     = "StepFunctionsIAMRole"
+  definition    = <<EOF
             {
-                "Variable": "$.describe_export_task.status_code",
-                "StringEquals": "COMPLETED",
-                "Next": "IsAllLogsExported"
+          "StartAt": "Initialize",
+          "TimeoutSeconds": 600,
+          "States": {
+            "Initialize": {
+              "Type": "Task",
+              "Resource": "${var.describe_log_groups_lambda_arn}",
+              "ResultPath": "$.log_groups_info",
+              "Next": "CreateExportTask"
             },
-            {
-                "Or": [
+            "CreateExportTask": {
+              "Type": "Task",
+              "Resource": "${var.create_export_task_lambda_arn}",
+              "ResultPath": "$.log_groups_info",
+              "Next": "WaitFiveSeconds"
+            },
+            "DescribeExportTasks": {
+              "Type": "Task",
+              "Resource": "${var.describe_export_task_lambda_arn}",
+              "ResultPath": "$.describe_export_task",
+              "Next": "CheckStatusCode"
+            },
+            "CheckStatusCode": {
+              "Type": "Choice",
+              "Choices": [
                 {
-                    "Variable": "$.describe_export_task.status_code",
-                    "StringEquals": "PENDING"
+                  "Variable": "$.describe_export_task.status_code",
+                  "StringEquals": "COMPLETED",
+                  "Next": "IsAllLogsExported?"
                 },
                 {
-                    "Variable": "$.describe_export_task.status_code",
-                    "StringEquals": "RUNNING"
+                  "Or": [
+                    {
+                      "Variable": "$.describe_export_task.status_code",
+                      "StringEquals": "PENDING"
+                    },
+                    {
+                      "Variable": "$.describe_export_task.status_code",
+                      "StringEquals": "RUNNING"
+                    }
+                  ],
+                  "Next": "WaitFiveSeconds"
                 }
-                ],
-                "Next": "WaitFiveSeconds"
+              ],
+              "Default": "ExportFailed"
+            },
+            "WaitFiveSeconds": {
+              "Type": "Wait",
+              "Seconds": 5,
+              "Next": "DescribeExportTasks"
+            },
+            "IsAllLogsExported?": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.log_groups_info.completed_flag",
+                  "BooleanEquals": true,
+                  "Next": "Done"
+                }
+              ],
+              "Default": "CreateExportTask"
+            },
+            "Done": {
+              "Type": "Succeed"
+            },
+            "ExportFailed": {
+              "Type": "Fail"
             }
-            ],
-            "Default": "SendSlackNotification"
-        },
-        "WaitFiveSeconds": {
-            "Type": "Wait",
-            "Seconds": 5,
-            "Next": "DescribeExportTasks"
-        },
-        "IsAllLogsExported": {
-            "Type": "Choice",
-            "Choices": [
-            {
-                "Variable": "$.log_groups_info.completed_flag",
-                "BooleanEquals": true,
-                "Next": "Succeed"
-            }
-            ],
-            "Default": "CreateExportTask"
-        },
-        "SendSlackNotification": {
-            "Type": "Task",
-            "Resource": "${var.send_notification_to_slack_lambda_arn}",
-            "Next": "Failed"
-        },
-        "Succeed": {
-            "Type": "Succeed"
-        },
-        "Failed": {
-            "Type": "Fail"
+          }
         }
-        }
-    }
     EOF
 }
 

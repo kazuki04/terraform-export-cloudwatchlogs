@@ -6,7 +6,7 @@ resource "aws_cloudwatch_event_rule" "this" {
 
 resource "aws_cloudwatch_event_target" "this" {
   rule     = aws_cloudwatch_event_rule.this.name
-  arn      = var.step_functions_arn
+  arn      = var.state_machine_arn
   role_arn = aws_iam_role.event_bridge.arn
 }
 
@@ -38,6 +38,6 @@ data "aws_iam_policy_document" "inline_policy" {
       actions = [
           "states:StartExecution"
       ]
-      resources = [var.step_functions_arn]
+      resources = [var.state_machine_arn]
   }
 }

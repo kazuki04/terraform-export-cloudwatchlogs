@@ -3,4 +3,4 @@ variable "role_name" {
   default = "ExcuteStepFunctions"
 }
 
-variable "step_functions_arn" {}
+variable "state_machine_arn" {}
